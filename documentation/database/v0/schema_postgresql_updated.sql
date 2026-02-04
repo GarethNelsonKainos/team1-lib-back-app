@@ -70,7 +70,7 @@ CREATE TABLE members (
     member_id BIGSERIAL PRIMARY KEY,
     member_code VARCHAR(50) NOT NULL UNIQUE,
     member_name VARCHAR(255) NOT NULL,
-    email VARCHAR(255),
+    email VARCHAR(255) UNIQUE,
     phone VARCHAR(20),
     address TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

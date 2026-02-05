@@ -1,5 +1,5 @@
 import express from 'express';
-import { Request, Response, NextFunction} from 'express';
+import { Request, Response, NextFunction } from 'express';
 
 const app = express();
 const PORT = 3000;

@@ -12,7 +12,7 @@ export interface Borrowing {
 export interface CreateBorrowingRequest {
   copy_id: number;
   member_id: number;
-  due_date?: Date; // If not provided, defaults to 14 days from now
+  due_date?: Date;
 }
 
 export interface BorrowingWithDetails extends Borrowing {

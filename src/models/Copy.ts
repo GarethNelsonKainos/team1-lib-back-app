@@ -10,7 +10,7 @@ export interface Copy {
 
 export interface CreateCopyRequest {
   copy_code: string;
-  status_id?: number; // defaults to 1 (Available)
+  status_id?: number;
 }
 
 export interface CopyWithStatus extends Copy {

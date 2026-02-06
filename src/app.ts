@@ -1,7 +1,7 @@
 import express from 'express';
 import { Request, Response, NextFunction } from 'express';
 import pool from './config/db-conn.js';
-import membersRouter from './routes/members_route.js';  
+import membersRouter from './routes/member-route.js';  
 
 const app = express();
 const PORT = process.env.PORT;

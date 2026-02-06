@@ -40,3 +40,54 @@ export const createMember = async (req: Request, res: Response, next: NextFuncti
 		next(error);
 	}
 };
+
+export const getMemberById = async (req: Request, res: Response, next: NextFunction) => {
+	try {
+		const { id } = req.params;
+
+		const idString = Array.isArray(id) ? id[0] : id;
+		
+
+		const memberId = parseInt(idString, 10);
+		if (isNaN(memberId)) {
+			return res.status(400).json({ error: 'Invalid member ID' });
+		}
+
+		const member = await memberService.getMemberById(memberId.toString());
+
+		if (!member) {
+			return res.status(404).json({ error: 'Member not found' });
+		}
+
+		res.status(200).json({
+			member: member
+		});
+	} catch (error) {
+		next(error);
+	}
+};
+
+export const deleteMember = async (req: Request, res: Response, next: NextFunction) => {
+	try {
+		const { id } = req.params;
+
+		const idString = Array.isArray(id) ? id[0] : id;
+		const memberId = parseInt(idString, 10);
+		if (isNaN(memberId)) {
+			return res.status(400).json({ error: 'Invalid member ID' });
+		}
+
+		const deletedMember = await memberService.deleteMember(memberId.toString());
+
+		if (!deletedMember) {
+			return res.status(404).json({ error: 'Member not found' });
+		}
+
+		res.status(200).json({
+			message: 'Member deleted successfully',
+			member: deletedMember
+		});
+	} catch (error) {
+		next(error);
+	}
+};

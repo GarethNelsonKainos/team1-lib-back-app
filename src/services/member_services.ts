@@ -34,3 +34,26 @@ export async function createMember(memberCode: string, memberName: string, email
 	const result = await pool.query(query, [memberCode, memberName, email, phone, address]);
 	return result.rows[0];
 }
+
+export async function getMemberById(id: string) {
+	const query = `
+		SELECT member_id, member_code, member_name, email, phone, address, created_at, updated_at
+		FROM members
+		WHERE member_id = $1 AND deleted_at IS NULL
+	`;
+
+	const result = await pool.query(query, [id]);
+	return result.rows[0] || null;
+}
+
+export async function deleteMember(id: string) {
+	const query = `
+		UPDATE members
+		SET deleted_at = NOW()
+		WHERE member_id = $1 AND deleted_at IS NULL
+		RETURNING member_id, member_code, member_name, email, phone, address, created_at, updated_at, deleted_at
+	`;
+
+	const result = await pool.query(query, [id]);
+	return result.rows[0] || null;
+}

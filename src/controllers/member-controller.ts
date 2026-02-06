@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express'; 
-import * as memberService from '../services/member_services.js';
+import * as memberService from '../services/member-services.js';
 
 export const getMembers = async (req: Request, res: Response, next: NextFunction) => {
 	try {

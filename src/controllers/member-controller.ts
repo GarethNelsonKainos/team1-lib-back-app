@@ -72,7 +72,7 @@ export const deleteMember = async (req: Request, res: Response, next: NextFuncti
 		const { id } = req.params;
 
 		const idString = Array.isArray(id) ? id[0] : id;
-				const memberId = parseInt(idString, 10);
+		const memberId = parseInt(idString, 10);
 		if (isNaN(memberId)) {
 			return res.status(400).json({ error: 'Invalid member ID' });
 		}

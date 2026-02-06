@@ -1,7 +1,12 @@
+import 'dotenv/config';
 import express from 'express';
 import { Request, Response, NextFunction } from 'express';
+<<<<<<< book-management-endpoints
+import bookRoutes from './routes/book-routes.js';
+=======
 import pool from './config/db-conn.js';
 import membersRouter from './routes/members_route.js';  
+>>>>>>> main
 
 const app = express();
 const PORT = process.env.PORT;
@@ -13,6 +18,11 @@ app.use('/members', membersRouter);
 app.get('/', (req: Request, res: Response, next: NextFunction) => {
   res.send('Hello, Librarian!');
 });
+
+
+app.use('/books', bookRoutes);
+
+app.listen(PORT, () => {
 
 app.get('/books', async (req: Request, res: Response) => {
   try {
@@ -41,6 +51,7 @@ app.get('/books', async (req: Request, res: Response) => {
 });
 
 app.listen(PORT, async () => {
+>>>>>>> main
   console.log(`App is running on port ${PORT}`);
 
   try {

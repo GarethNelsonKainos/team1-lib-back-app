@@ -19,11 +19,11 @@ app.get('/', (req: Request, res: Response, next: NextFunction) => {
   res.send('Hello, Librarian!');
 });
 
-<<<<<<< book-management-endpoints
+
 app.use('/books', bookRoutes);
 
 app.listen(PORT, () => {
-=======
+
 app.get('/books', async (req: Request, res: Response) => {
   try {
     const result = await pool.query(`

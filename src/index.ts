@@ -1,11 +1,14 @@
 import express from 'express';
 import { Request, Response, NextFunction } from 'express';
-import pool from './config/db-conn';  
+import pool from './config/db-conn.js';
+import membersRouter from './routes/members_route.js';  
 
 const app = express();
 const PORT = process.env.PORT;
 
 app.use(express.json());
+
+app.use('/members', membersRouter);
 
 app.get('/', (req: Request, res: Response, next: NextFunction) => {
   res.send('Hello, Librarian!');

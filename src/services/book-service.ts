@@ -153,7 +153,7 @@ export const deleteBook = async (bookId: number): Promise<{ success: boolean; er
   const activeBorrows = await query(
     `SELECT COUNT(*) as count FROM borrowings br
      JOIN copies c ON br.copy_id = c.copy_id
-     WHERE c.book_id = $1 AND br.return_date IS NULL`,
+     WHERE c.book_id = $1 AND br.returned_at IS NULL`,
     [bookId]
   );
 

@@ -8,11 +8,6 @@ export interface Copy {
   deleted_at: Date | null;
 }
 
-export interface CreateCopyRequest {
-  copy_code: string;
-  status_id?: number;
-}
-
 export interface CopyWithStatus extends Copy {
   status_name?: string;
   book_title?: string;

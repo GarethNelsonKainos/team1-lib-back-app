@@ -92,22 +92,36 @@ export const updateBook = async (
     genre_ids?: number[];
   }
 ): Promise<BookWithDetails | null> => {
-  const fields: string[] = [];
-  const params: any[] = [];
+  await query('BEGIN');
+  try {
+    const fields: string[] = [];
+    const params: any[] = [];
 
-  if (updates.book_title !== undefined) { params.push(updates.book_title); fields.push(`book_title = $${params.length}`); }
-  if (updates.isbn !== undefined) { params.push(updates.isbn); fields.push(`isbn = $${params.length}`); }
-  if (updates.publication_year !== undefined) { params.push(updates.publication_year); fields.push(`publication_year = $${params.length}`); }
-  if (updates.description !== undefined) { params.push(updates.description); fields.push(`description = $${params.length}`); }
+      if (updates.book_title !== undefined) { params.push(updates.book_title); fields.push(`book_title = $${params.length}`); }
+      if (updates.isbn !== undefined) { params.push(updates.isbn); fields.push(`isbn = $${params.length}`); }
+      if (updates.publication_year !== undefined) { params.push(updates.publication_year); fields.push(`publication_year = $${params.length}`); }
+      if (updates.description !== undefined) { params.push(updates.description); fields.push(`description = $${params.length}`); }
 
-  if (fields.length > 0) {
-    params.push(bookId);
-    await query(`UPDATE books SET ${fields.join(', ')}, updated_at = NOW() WHERE book_id = $${params.length} AND deleted_at IS NULL`, params);
+      if (fields.length > 0) {
+        params.push(bookId);
+        await query(
+          `UPDATE books SET ${fields.join(', ')}, updated_at = NOW() WHERE book_id = $${params.length} AND deleted_at IS NULL`,
+          params
+        );
+      }
+
+      if (updates.author_ids !== undefined) {
+        await insertAssociations(bookId, 'book_authors', 'author_id', updates.author_ids);
+      }
+      if (updates.genre_ids !== undefined) {
+        await insertAssociations(bookId, 'book_genres', 'genre_id', updates.genre_ids);
+      }
+
+      await query('COMMIT');
+  } catch (err) {
+    await query('ROLLBACK');
+    throw err;
   }
-
-  if (updates.author_ids !== undefined) await insertAssociations(bookId, 'book_authors', 'author_id', updates.author_ids);
-  if (updates.genre_ids !== undefined) await insertAssociations(bookId, 'book_genres', 'genre_id', updates.genre_ids);
-
   return getBookById(bookId);
 };
 

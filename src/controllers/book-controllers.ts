@@ -5,9 +5,13 @@ import { BookWithDetails, UpdateBookRequest, CreateBookRequest } from '../models
 export const getBooks = async (req: Request, res: Response) => {
   try {
     const { title, author, isbn, genre, year, page, pageSize } = req.query as Record<string, string | undefined>;
+    const parsedPage = page !== undefined ? Number(page) : NaN;
+    const parsedPageSize = page !== undefined ? Number(pageSize) : NaN;
+    const safePage = Number.isFinite(parsedPage) && parsedPage > 0 ? Math.floor(parsedPage) : 1;
+    const safePageSize = Number.isFinite(parsedPageSize) && parsedPageSize > 0 ? Math.floor(parsedPageSize) : 20;
     const result = await listBooks(
       { title: title?.trim(), author: author?.trim(), isbn: isbn?.trim(), genre: genre?.trim(), year: year ? parseInt(year, 10) : undefined },
-      { page: Math.max(parseInt(page || '1'), 1), pageSize: Math.max(parseInt(pageSize || '20'), 1) }
+      { page: safePage, pageSize: safePageSize }
     );
     res.json(result);
   } catch (error) {

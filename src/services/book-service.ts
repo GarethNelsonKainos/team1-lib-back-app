@@ -133,21 +133,34 @@ export const createBook = async (req: {
   author_ids?: number[];
   genre_ids?: number[];
 }): Promise<BookWithDetails> => {
-  const bookId = (await query(
-    `INSERT INTO books (book_title, isbn, publication_year, description) VALUES ($1, $2, $3, $4) RETURNING book_id`,
-    [req.book_title, req.isbn || null, req.publication_year || null, req.description || null]
-  )).rows[0].book_id;
+  await query('BEGIN');
+  try {
+    const insertResult = await query(
+      `INSERT INTO books (book_title, isbn, publication_year, description) VALUES ($1, $2, $3, $4) RETURNING book_id`,
+      [req.book_title, req.isbn || null, req.publication_year || null, req.description || null]
+    );
+    const bookId = insertResult.rows[0].book_id;
 
-  if (req.author_ids?.length) {
-    const values = req.author_ids.map((_, idx) => `($1, $${idx + 2})`).join(', ');
-    await query(`INSERT INTO book_authors (book_id, author_id) VALUES ${values}`, [bookId, ...req.author_ids]);
-  }
-  if (req.genre_ids?.length) {
-    const values = req.genre_ids.map((_, idx) => `($1, $${idx + 2})`).join(', ');
-    await query(`INSERT INTO book_genres (book_id, genre_id) VALUES ${values}`, [bookId, ...req.genre_ids]);
-  }
+    if (req.author_ids?.length) {
+      const values = req.author_ids.map((_, idx) => `($1, $${idx + 2})`).join(', ');
+      await query(`INSERT INTO book_authors (book_id, author_id) VALUES ${values}`, [bookId, ...req.author_ids]);
+    }
+    if (req.genre_ids?.length) {
+      const values = req.genre_ids.map((_, idx) => `($1, $${idx + 2})`).join(', ');
+      await query(`INSERT INTO book_genres (book_id, genre_id) VALUES ${values}`, [bookId, ...req.genre_ids]);
+    }
 
-  return (await query(`SELECT ${BOOK_SELECT} FROM books b ${BOOK_JOINS} WHERE b.book_id = $1 GROUP BY b.book_id`, [bookId])).rows[0] as BookWithDetails;
+    const createdBookResult = await query(
+      `SELECT ${BOOK_SELECT} FROM books b ${BOOK_JOINS} WHERE b.book_id = $1 GROUP BY b.book_id`,
+      [bookId]
+    );
+
+    await query('COMMIT');
+    return createdBookResult.rows[0] as BookWithDetails;
+  } catch (error) {
+    await query('ROLLBACK');
+    throw error;
+  }
 };
 
 export const getBookById = async (bookId: number): Promise<BookWithDetails | null> => {

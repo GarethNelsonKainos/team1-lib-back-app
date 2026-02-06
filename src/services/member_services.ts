@@ -6,7 +6,7 @@ export async function getAllMembers(search?: string, memberCode?: string) {
 		FROM members
 		WHERE deleted_at IS NULL
 	`;
-	const params: any[] = [];
+	const params: string[] = [];
 
 	if (search) {
 		query += ` AND member_name ILIKE $${params.length + 1}`;
